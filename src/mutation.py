@@ -11,7 +11,7 @@ def build_guest_to_table_map(seating):
 
 
 # STANDARD MUTATION
-def standard_mutation(seating, pm):
+def swap_mutation(seating, pm):
 
     # Deep copy to avoid mutating the original input
     mutated = copy.deepcopy(seating)

@@ -1,6 +1,6 @@
 
 from individual import generate_random_seating
-from mutation import standard_mutation, one_point_mutation, multiple_point_mutation, build_guest_to_table_map
+from mutation import swap_mutation, one_point_mutation, multiple_point_mutation, build_guest_to_table_map
 
 
 def print_seating(seating, title="Seating"):
@@ -52,8 +52,8 @@ print_seating(initial_seating, "Initial Seating")
 
 # TESTING STANDARD MUTATION:
 pm = 0.1  # mutation probability (fine tune)
-mutated_seating = standard_mutation(initial_seating, pm)
-print_seating(mutated_seating, "Standard Mutated Seating")
+mutated_seating = swap_mutation(initial_seating, pm)
+print_seating(mutated_seating, "Swap Mutated Seating")
 print_swapped_guests(initial_seating, mutated_seating)
 
 # TESTING ONE-POINT MUTATION:
