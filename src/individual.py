@@ -1,12 +1,12 @@
 import random
-from fitness import calculate_total_fitness
-from utils import load_relationship_matrix
+from .fitness import calculate_total_fitness
+from .utils import load_relationship_matrix
 
 NUM_GUESTS = 64
 NUM_TABLES = 8
 GUESTS_PER_TABLE = NUM_GUESTS // NUM_TABLES
 
-csv_path = "../data/seating_data.csv"
+csv_path = "data/seating_data.csv"
 relationship_matrix = load_relationship_matrix(csv_path)
 
 # Cria um array random com as mesas

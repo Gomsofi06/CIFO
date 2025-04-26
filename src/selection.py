@@ -1,6 +1,6 @@
 import random
 from copy import deepcopy
-from individual import Individual
+from .individual import Individual
 
 #roulette selection
 def roulette_selection(population: list[Individual]):
