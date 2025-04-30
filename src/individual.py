@@ -6,7 +6,7 @@ NUM_GUESTS = 64
 NUM_TABLES = 8
 GUESTS_PER_TABLE = NUM_GUESTS // NUM_TABLES
 
-csv_path = "data/seating_data.csv"
+csv_path = "../data/seating_data.csv"
 relationship_matrix = load_relationship_matrix(csv_path)
 
 # Cria um array random com as mesas
@@ -21,7 +21,6 @@ def generate_random_seating():
     return seating
 
 
-
 class Individual:
     def __init__(self, seating=None):
         if seating is None:
@@ -33,3 +32,6 @@ class Individual:
         if self._fitness is None:
             self._fitness = calculate_total_fitness(self.seating, relationship_matrix)
         return self._fitness
+
+def create_individual():
+    return generate_random_seating()

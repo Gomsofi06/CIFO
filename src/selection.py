@@ -1,11 +1,13 @@
 import random
 from copy import deepcopy
-from .individual import Individual
+from .individual import create_individual
+from src.individual import create_individual
+from src.fitness import evaluate_fitness
 
 #roulette selection
-def roulette_selection(population: list[Individual]):
+def roulette_selection(population: list[create_individual]):
 
-    fitness_values = [ind.fitness() for ind in population] # get fitness values from population
+    fitness_values = [evaluate_fitness(ind) for ind in population] # get fitness values from population
 
     total_fitness = sum(fitness_values)  # calculate total fitness
     
@@ -20,9 +22,9 @@ def roulette_selection(population: list[Individual]):
 
 
 #ranking selsction
-def ranking_selection(population: list[Individual]):
+def ranking_selection(population: list[create_individual]):
     
-    sorted_population = sorted(population, key=lambda ind: ind.fitness(), reverse=True)  #sort population from worst to best (by fitness)
+    sorted_population = sorted(population, key=lambda ind: evaluate_fitness(ind), reverse=True)  #sort population from worst to best (by fitness)
     n = len(sorted_population) # length of ranking
 
     ranks = list(range(1, n + 1))  # list of range values [1, 2, 3, ...]
@@ -34,12 +36,8 @@ def ranking_selection(population: list[Individual]):
     return deepcopy(sorted_population[selected_index]) # return this individual
 
 #tournament selection
-def tournament_selection(population: list[Individual], k=3): # k = 3 --> tournament with 3 competitors (recommended value for this data size)
-
-    # randomly choose competitors (with replacement, in order to fulfill one of the principles of selection algorithms, that all individuals even the one with
-    #    worst fitness have a chance higher than 0 to be selected. Without replacement, the one with lowest total fitness would always lose against its
-    #        competitors, so no chance of selection. With replacement, there is a probability > 0 that the total worst individual based on fitness gets randomly
-    #           choosen 3 times for the tournament, meaning it would be selected.
-    competitors = [random.choice(population) for n in range(k)]
-    best = max(competitors, key=lambda ind: ind.fitness()) # find competitor with highest fitness
-    return deepcopy(best) # return this individual
+def tournament_selection(population, k=3):
+    competitors = random.sample(population, k)
+    best = max(competitors, key=lambda ind: evaluate_fitness(ind)
+)
+    return best
