@@ -5,7 +5,7 @@ from individual import generate_random_seating
 
 
 #roulette selection
-# Indivíduos com maior fitness têm maior probabilidade de serem escolhidos
+# individuals with highest fitness have higher chance of being selected
 def roulette_selection(population: list[generate_random_seating]):
     fitness_values = [Individual.fitness(ind) for ind in population] # get fitness values from population
 
@@ -23,7 +23,7 @@ def roulette_selection(population: list[generate_random_seating]):
 
 
 #ranking selsction
-# Dá a cada um uma probabilidade baseada na sua posição no ranking, e não no valor real do fitness
+# every individual gets probability based on position in ranking, not real fitness value
 def ranking_selection(population: list[generate_random_seating]):
     
     sorted_population = sorted(population, key=lambda ind: Individual.fitness(ind), reverse=True)  #sort population from worst to best (by fitness)
@@ -39,7 +39,7 @@ def ranking_selection(population: list[generate_random_seating]):
 
 
 #tournament selection
-# Escolhe aleatoriamente k indivíduos da população (por defeito 3). Entre esses k, escolhe o melhor
+# randomly select k individuals from population, between these k, best one wins
 def tournament_selection(population, k=3):
     competitors = random.sample(population, k)
     best = max(competitors, key=lambda ind: Individual.fitness(ind))

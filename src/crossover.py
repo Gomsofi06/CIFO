@@ -1,6 +1,6 @@
 import random
 import numpy as np
-from individual import Individual  # importante para verificar o tipo
+from individual import Individual  # importante to verify type
 
 def extract_seating(parent):
     if isinstance(parent, Individual):
@@ -13,11 +13,11 @@ def group_based_crossover(parent1, parent2):
     seating1 = extract_seating(parent1)
     seating2 = extract_seating(parent2)
 
-    # Junta todos os convidados dos dois pais, mantendo a ordem aleatória
+    # join all guests from both parents, keeping random order
     guests = [guest for table in (seating1 + seating2) for guest in table]
     random.shuffle(guests)
 
-    # Remove duplicados mantendo a ordem
+    # remove duplicates keeping the order
     seen = set()
     unique_guests = []
     for guest in guests:
@@ -25,9 +25,9 @@ def group_based_crossover(parent1, parent2):
             seen.add(guest)
             unique_guests.append(guest)
 
-    assert len(unique_guests) == 64, "Erro: número de convidados únicos incorreto!"
+    assert len(unique_guests) == 64, "Error: inccorect number of unique guests"
 
-    # Divide em 8 mesas de 8
+    # Divide in 8 tables of 8 persons
     child = [unique_guests[i * 8:(i + 1) * 8] for i in range(8)]
     return child, child.copy()
 
@@ -37,7 +37,7 @@ def greedy_table_merge_crossover(parent1, parent2):
     seating1 = extract_seating(parent1)
     seating2 = extract_seating(parent2)
 
-    # Junta todas as mesas
+    # join all the tables
     tables = seating1 + seating2
     random.shuffle(tables)
 
@@ -50,8 +50,8 @@ def greedy_table_merge_crossover(parent1, parent2):
                 used.add(guest)
                 unique_guests.append(guest)
 
-    assert len(unique_guests) == 64, "Erro: número de convidados únicos incorreto!"
+    assert len(unique_guests) == 64, "Error: incorrect number of unique guests"
 
-    # Divide em 8 mesas de 8
+    # divide in 8 tables with 8 persons
     child = [unique_guests[i * 8:(i + 1) * 8] for i in range(8)]
     return child, child.copy()

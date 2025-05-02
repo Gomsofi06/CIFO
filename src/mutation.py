@@ -13,28 +13,28 @@ def build_guest_to_table_map(seating):
 
 
 # STANDARD MUTATION
-# Para cada convidado com probabilidade pm, tenta trocá-lo com outro convidado de uma mesa diferente
+# for every guest with probability pm, try to swap with other guest from other table
 def swap_mutation(seating, pm=0.2):
     mutated = copy.deepcopy(seating)
     guest_to_table = {}
 
-    # Mapeia cada convidado para a mesa onde está
+    # map every guest to his current table
     for table_idx, table in enumerate(mutated):
         for guest in table:
             guest_to_table[guest] = table_idx
 
     for guest in range(64):
-        # Ignora se o convidado não estiver atribuído a nenhuma mesa
+        # ignore if guest is not mapped to any table
         if guest not in guest_to_table:
             continue  
         
         if random.random() < pm:
             current_table = guest_to_table[guest]
 
-            # Escolhe uma mesa diferente com convidados
+            # choose a different table with guests
             non_empty_tables = [i for i, table in enumerate(mutated) if len(table) > 0 and i != current_table]
             
-            # ignora a mutação se não houver mesas válidas
+            # ignore mutation if there are no valid tables
             if not non_empty_tables:
                 continue 
 
@@ -44,7 +44,7 @@ def swap_mutation(seating, pm=0.2):
             i = mutated[current_table].index(guest)
             j = mutated[other_table].index(other_guest)
 
-            # Faz a troca
+            # make swap
             mutated[current_table][i], mutated[other_table][j] = other_guest, guest
 
             guest_to_table[guest] = other_table
@@ -54,7 +54,7 @@ def swap_mutation(seating, pm=0.2):
 
 
 # ONE-POINT MUTATION (BIT FLIP)
-# Escolhe um convidado aleatoriamente e troca-o para uma mesa diferente
+# choose one random guest and swap to a different table
 def one_point_mutation(seating, pm=0.2):
     mutated = copy.deepcopy(seating)
 
@@ -88,7 +88,7 @@ def one_point_mutation(seating, pm=0.2):
 
 
 # MULTIPOINT MUTATION:
-# Faz várias trocas como a anterior (num_mutations vezes)
+# make various swaps like in the last one (num_mutations times)
 def multiple_point_mutation(seating, num_mutations=5):
     mutated = copy.deepcopy(seating)
 

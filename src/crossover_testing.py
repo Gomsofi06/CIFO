@@ -35,7 +35,7 @@ def test_crossover_v1(crossover_func, relationship_matrix=None):
     assert validate_seating(child1_seating), "Invalid child1 seating!"
     assert validate_seating(child2_seating), "Invalid child2 seating!"
     print("\n")
-    print("Seating válido para ambos os filhos!\n")
+    print("seating valid for both children!\n")
 
 def test_crossover():
     csv_path = "../data/seating_data.csv"

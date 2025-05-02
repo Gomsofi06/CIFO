@@ -3,20 +3,20 @@ from copy import deepcopy
 from individual import Individual
 from selection import roulette_selection, ranking_selection, tournament_selection
 
-# Gera população de indivíduos
+# create population of individuals
 def generate_population(n=20):
     return [Individual() for _ in range(n)]
 
-# Validação de estrutura
+# validate structure
 def validate_seating(individual):
     seating = individual.seating
     guests = [g for t in seating for g in t]
-    assert len(seating) == 8, "Deve haver 8 mesas"
-    assert all(len(t) == 8 for t in seating), "Cada mesa deve ter 8 convidados"
-    assert len(guests) == 64, "Total de convidados deve ser 64"
-    assert len(set(guests)) == 64, "Convidados repetidos"
+    assert len(seating) == 8, "should be 8 tables"
+    assert all(len(t) == 8 for t in seating), "each table should have 8 guests"
+    assert len(guests) == 64, "total of guests should be 64"
+    assert len(set(guests)) == 64, "repeated guests"
 
-# === TESTES ===
+# === TESTS ===
 
 def test_roulette_selection():
     population = generate_population()
@@ -37,4 +37,4 @@ if __name__ == "__main__":
     test_roulette_selection()
     test_ranking_selection()
     test_tournament_selection()
-    print("Todos os testes de seleção passaram com sucesso!")
+    print("all tests worked succesfully")

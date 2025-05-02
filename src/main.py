@@ -8,16 +8,16 @@ from ga_runner import run_ga
 
 def main_menu():
     print("\n|*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*|")
-    print("|                            MENU PRINCIPAL                         |")
-    print("|                    1. Correr testes de mutation                   |")
-    print("|                    2. Correr testes de crossover                  |")
-    print("|                    3. Correr testes de selection                  |")
-    print("|                    4. Executar algoritmo genético                 |")
-    print("|                    0. Sair                                        |")
+    print("|                            Main menu                              |")
+    print("|                    1. run mutation tests                          |")
+    print("|                    2. run crossover tests                         |")
+    print("|                    3. run selection tests                         |")
+    print("|                    4. execute genetic algorithm                   |")
+    print("|                    0. exit                                        |")
     print("|*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*|")
     print("\n")
 
-    choice = input("Escolha uma opção: ")
+    choice = input("Choose one option: ")
     return choice
 
 
@@ -77,4 +77,4 @@ if __name__ == "__main__":
             print("|*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*|")
             sys.exit()
         else:
-            print("Opção inválida. Tente novamente.")
+            print("invalid option, try again.")

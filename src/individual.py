@@ -9,8 +9,8 @@ GUESTS_PER_TABLE = NUM_GUESTS // NUM_TABLES
 csv_path = "../data/seating_data.csv"
 relationship_matrix = load_relationship_matrix(csv_path) # From utils
 
-# Cria um array random com as mesas
-# Divide a lista final em 8 sublistas de 8 pessoas, ou seja, 8 mesas
+# create an array with random tables
+# divide the final list in 8 sublists with 8 persons (tables)
 def generate_random_seating():
     guests = list(range(NUM_GUESTS))
     random.shuffle(guests)
@@ -22,7 +22,7 @@ def generate_random_seating():
     return seating
 
 
-# Cria a class Individual, que contem o init() e fitness()
+# create class Individual with init() and fitness()
 class Individual:
     def __init__(self, seating=None):
         if seating is None:
