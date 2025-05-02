@@ -1,12 +1,10 @@
 from individual import Individual
 from mutation import swap_mutation, one_point_mutation, multiple_point_mutation, build_guest_to_table_map
 
-
 def print_seating(seating, title="Seating"):
     print(f"\n{title}:")
     for i, table in enumerate(seating):
         print(f"Table {i + 1}: {table}")
-
 
 def print_swapped_guests(before, after):
     print("\nDetected Guest Swaps:")
@@ -39,25 +37,24 @@ def print_swapped_guests(before, after):
     if swap_count == 0:
         print("No clean swaps detected.")
 
+def test_mutations():
+    original_individual = Individual()
+    initial_seating = original_individual.seating
+    print_seating(initial_seating, "Initial Seating")
 
-# === INITIAL INDIVIDUAL ===
-original_individual = Individual()
-initial_seating = original_individual.seating
-print_seating(initial_seating, "Initial Seating")
+    # === SWAP MUTATION ===
+    pm = 0.1
+    swap_mutated = Individual(seating=swap_mutation(initial_seating, pm))
+    print_seating(swap_mutated.seating, "Swap Mutated Seating")
+    print_swapped_guests(initial_seating, swap_mutated.seating)
 
-# === SWAP MUTATION ===
-pm = 0.1
-swap_mutated = Individual(seating=swap_mutation(original_individual.seating, pm))
-print_seating(swap_mutated.seating, "Swap Mutated Seating")
-print_swapped_guests(initial_seating, swap_mutated.seating)
+    # === ONE-POINT MUTATION ===
+    one_point_mutated = Individual(seating=one_point_mutation(initial_seating))
+    print_seating(one_point_mutated.seating, "One-Point Mutated Seating")
+    print_swapped_guests(initial_seating, one_point_mutated.seating)
 
-# === ONE-POINT MUTATION ===
-one_point_mutated = Individual(seating=one_point_mutation(original_individual.seating))
-print_seating(one_point_mutated.seating, "One-Point Mutated Seating")
-print_swapped_guests(initial_seating, one_point_mutated.seating)
-
-# === MULTI-POINT MUTATION ===
-num_mutations = 5
-multi_point_mutated = Individual(seating=multiple_point_mutation(original_individual.seating, num_mutations))
-print_seating(multi_point_mutated.seating, f"Multi-Point Mutated Seating (Swaps: {num_mutations})")
-print_swapped_guests(initial_seating, multi_point_mutated.seating)
+    # === MULTI-POINT MUTATION ===
+    num_mutations = 5
+    multi_point_mutated = Individual(seating=multiple_point_mutation(initial_seating, num_mutations))
+    print_seating(multi_point_mutated.seating, f"Multi-Point Mutated Seating (Swaps: {num_mutations})")
+    print_swapped_guests(initial_seating, multi_point_mutated.seating)

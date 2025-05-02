@@ -76,3 +76,5 @@ def run_ga(pop_size=100, generations=200, elite_size=1, use_elitism=True,
     best_solution, best_score = final_scored[0]
 
     return best_solution, best_score, best_fitness_per_gen
+
+
