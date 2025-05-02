@@ -1,66 +1,57 @@
 import random
 import numpy as np
+from individual import Individual  # importante para verificar o tipo
+
+def extract_seating(parent):
+    if isinstance(parent, Individual):
+        return parent.seating
+    elif isinstance(parent, tuple):
+        parent = parent[0]
+    return parent
 
 def group_based_crossover(parent1, parent2):
-    """Combina mesas dos pais garantindo variedade sem conflitos"""
-    if isinstance(parent1, tuple):
-        parent1 = parent1[0]
-    if isinstance(parent2, tuple):
-        parent2 = parent2[0]
+    seating1 = extract_seating(parent1)
+    seating2 = extract_seating(parent2)
 
-    if isinstance(parent1[0], (int, np.integer)):
-        raise ValueError("Esperava seating completo, mas parent1 parece ser uma mesa ou indivíduo.")
+    # Junta todos os convidados dos dois pais, mantendo a ordem aleatória
+    guests = [guest for table in (seating1 + seating2) for guest in table]
+    random.shuffle(guests)
 
-    parent1 = [list(table) for table in parent1]
-    parent2 = [list(table) for table in parent2]
+    # Remove duplicados mantendo a ordem
+    seen = set()
+    unique_guests = []
+    for guest in guests:
+        if guest not in seen:
+            seen.add(guest)
+            unique_guests.append(guest)
 
-    all_tables = parent1 + parent2
-    random.shuffle(all_tables)
+    assert len(unique_guests) == 64, "Erro: número de convidados únicos incorreto!"
 
-    child = []
-    used_guests = set()
-
-    for table in all_tables:
-        new_table = []
-        for guest in table:
-            if guest not in used_guests:
-                new_table.append(guest)
-                used_guests.add(guest)
-            if len(new_table) == 8:
-                break
-        if len(new_table) == 8:
-            child.append(new_table)
-        if len(child) == 8:
-            break
-
+    # Divide em 8 mesas de 8
+    child = [unique_guests[i * 8:(i + 1) * 8] for i in range(8)]
     return child, child.copy()
 
+
+
 def greedy_table_merge_crossover(parent1, parent2):
-    if isinstance(parent1, tuple):
-        parent1 = parent1[0]
-    if isinstance(parent2, tuple):
-        parent2 = parent2[0]
+    seating1 = extract_seating(parent1)
+    seating2 = extract_seating(parent2)
 
-    parent1 = [list(table) for table in parent1]
-    parent2 = [list(table) for table in parent2]
-
-    tables = parent1 + parent2
+    # Junta todas as mesas
+    tables = seating1 + seating2
     random.shuffle(tables)
 
     used = set()
-    child = []
+    unique_guests = []
 
     for table in tables:
-        new_table = []
         for guest in table:
             if guest not in used:
-                new_table.append(guest)
                 used.add(guest)
-            if len(new_table) == 8:
-                break
-        if len(new_table) == 8:
-            child.append(new_table)
-        if len(child) == 8:
-            break
+                unique_guests.append(guest)
 
+    assert len(unique_guests) == 64, "Erro: número de convidados únicos incorreto!"
+
+    # Divide em 8 mesas de 8
+    child = [unique_guests[i * 8:(i + 1) * 8] for i in range(8)]
     return child, child.copy()

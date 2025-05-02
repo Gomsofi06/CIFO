@@ -7,6 +7,7 @@ population = [Individual() for n in range(10)]
 #sort population by fitness just for visualization, so easily can be seen which one was selected at the end (2nd highest, 3rd highest etc)
 sorted_population = sorted(population, key=lambda ind: ind.fitness(), reverse=True)
 rank_map = {}
+
 for rank, ind in enumerate(sorted_population):
     fitness = ind.fitness()
     if fitness not in rank_map:  # take only first one with this fitness (in case of some with exact same fitness)

@@ -1,19 +1,20 @@
 import random
 from copy import deepcopy
-from .individual import create_individual
-from src.individual import create_individual
-from src.fitness import evaluate_fitness
+from individual import Individual
+from individual import generate_random_seating
+
 
 #roulette selection
-def roulette_selection(population: list[create_individual]):
-
-    fitness_values = [evaluate_fitness(ind) for ind in population] # get fitness values from population
+# Indivíduos com maior fitness têm maior probabilidade de serem escolhidos
+def roulette_selection(population: list[generate_random_seating]):
+    fitness_values = [Individual.fitness(ind) for ind in population] # get fitness values from population
 
     total_fitness = sum(fitness_values)  # calculate total fitness
     
     # Generate random number between 0 and total fitness
     random_nr = random.uniform(0, total_fitness)
     box_boundary = 0
+    
     # For each individual check if random number is inside the individuals box
     for ind, fitness in zip(population, fitness_values):
         box_boundary += fitness
@@ -22,9 +23,10 @@ def roulette_selection(population: list[create_individual]):
 
 
 #ranking selsction
-def ranking_selection(population: list[create_individual]):
+# Dá a cada um uma probabilidade baseada na sua posição no ranking, e não no valor real do fitness
+def ranking_selection(population: list[generate_random_seating]):
     
-    sorted_population = sorted(population, key=lambda ind: evaluate_fitness(ind), reverse=True)  #sort population from worst to best (by fitness)
+    sorted_population = sorted(population, key=lambda ind: Individual.fitness(ind), reverse=True)  #sort population from worst to best (by fitness)
     n = len(sorted_population) # length of ranking
 
     ranks = list(range(1, n + 1))  # list of range values [1, 2, 3, ...]
@@ -35,9 +37,10 @@ def ranking_selection(population: list[create_individual]):
     selected_index = random.choices(range(n), weights=probabilities, k=1)[0]  # select random individual based on probabilites
     return deepcopy(sorted_population[selected_index]) # return this individual
 
+
 #tournament selection
+# Escolhe aleatoriamente k indivíduos da população (por defeito 3). Entre esses k, escolhe o melhor
 def tournament_selection(population, k=3):
     competitors = random.sample(population, k)
-    best = max(competitors, key=lambda ind: evaluate_fitness(ind)
-)
+    best = max(competitors, key=lambda ind: Individual.fitness(ind))
     return best

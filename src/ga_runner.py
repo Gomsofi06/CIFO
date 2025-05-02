@@ -1,11 +1,9 @@
-
-from src.individual import create_individual
-from src.fitness import evaluate_fitness
-from src.selection import roulette_selection, ranking_selection, tournament_selection
-from src.crossover import group_based_crossover, greedy_table_merge_crossover
-from src.mutation import swap_mutation, one_point_mutation, multiple_point_mutation
-import random
+from individual import Individual
+from selection import roulette_selection, ranking_selection, tournament_selection
+from crossover import group_based_crossover, greedy_table_merge_crossover
+from mutation import swap_mutation, one_point_mutation, multiple_point_mutation
 from copy import deepcopy
+import random
 
 selection_methods = {
     "roulette": roulette_selection,
@@ -27,6 +25,7 @@ mutation_methods = {
 def run_ga(pop_size=100, generations=200, elite_size=1, use_elitism=True,
            selection_type="tournament", crossover_type="group", mutation_type="swap",
            mutation_prob=0.2, verbose=True, seed=None):
+    
     if seed is not None:
         random.seed(seed)
 
@@ -34,13 +33,13 @@ def run_ga(pop_size=100, generations=200, elite_size=1, use_elitism=True,
     crossover = crossover_methods[crossover_type]
     mutate = mutation_methods[mutation_type]
 
-    population = [create_individual() for _ in range(pop_size)]
-    
+    population = [Individual() for _ in range(pop_size)]
+
     best_fitness_per_gen = []
     avg_fitness_per_gen = []
 
     for gen in range(generations):
-        scored_pop = [(ind, evaluate_fitness(ind)) for ind in population]
+        scored_pop = [(ind, ind.fitness()) for ind in population]
         scored_pop.sort(key=lambda x: x[1], reverse=True)
 
         if verbose and gen % 10 == 0:
@@ -54,19 +53,25 @@ def run_ga(pop_size=100, generations=200, elite_size=1, use_elitism=True,
             elites = [ind for ind, _ in scored_pop[:elite_size]]
             new_population.extend(elites)
 
-        individuals_only = [ind for ind, _ in scored_pop]  # <- CORREÇÃO AQUI
+        individuals_only = [ind for ind, _ in scored_pop]
 
         while len(new_population) < pop_size:
             parent1 = select(individuals_only)
             parent2 = select(individuals_only)
-            child1, child2 = crossover(parent1, parent2)
-            child1 = mutate(child1, mutation_prob)
-            child2 = mutate(child2, mutation_prob)
+            
+            child1_seating, child2_seating = crossover(parent1, parent2)
+
+            if mutation_type == "multiple_point":
+                child1 = Individual(seating=mutate(child1_seating, num_mutations=5))
+                child2 = Individual(seating=mutate(child2_seating, num_mutations=5))
+            else:
+                child1 = Individual(seating=mutate(child1_seating, mutation_prob))
+                child2 = Individual(seating=mutate(child2_seating, mutation_prob))
             new_population.extend([child1, child2])
 
         population = new_population[:pop_size]
 
-    final_scored = [(ind, evaluate_fitness(ind)) for ind in population]
+    final_scored = [(ind, ind.fitness()) for ind in population]
     final_scored.sort(key=lambda x: x[1], reverse=True)
     best_solution, best_score = final_scored[0]
 

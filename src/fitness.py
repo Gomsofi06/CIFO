@@ -1,8 +1,8 @@
 # Wrapper para compatibilidade com GA
-from .utils import load_relationship_matrix
+from utils import load_relationship_matrix
 
 csv_path = "../data/seating_data.csv"
-relationship_matrix = load_relationship_matrix(csv_path)
+relationship_matrix = load_relationship_matrix(csv_path) # From utils
 
 
 # Calcula o score de cada uma das mesas
@@ -25,6 +25,3 @@ def calculate_total_fitness(seating, relationship_matrix):
         total += calculate_table_score(table, relationship_matrix)
     
     return total
-
-def evaluate_fitness(individual):
-    return calculate_total_fitness(individual, relationship_matrix)
