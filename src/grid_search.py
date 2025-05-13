@@ -12,17 +12,17 @@ os.makedirs(os.path.dirname(RESULTS_PATH), exist_ok=True)
 def get_parameters():
     """Generate all parameter combinations"""
     params = {
-        'pop_size': [100],                                                  # Population size
-        'generations': [100],                                               # Number of generations
-        'selection': ['ranking', 'tournament', 'boltzmann'],                # Selection methods ranking, tournament, roulette, stochastic, boltzmann
-        'crossover': ['greedy_merge', 'partially', 'table_preserve'],       # Crossover methods group_based, greedy_merge, partially, table_preserve 
-        'mutation': [ 'inversion'],                                         # Mutation methods swap, one_point, multi_point, inversion, table_swap
-        'cx_rate': [0.5,0.6,0.7,0.8,0.9],                                   # Crossover rate (0 to 1)
-        'mut_rate': [0.5,0.6,0.7,0.8,0.9],                                  # Mutation rate (0 to 1)
-        'elitism_percent': [0,0.05],                                        # Elitism percentage (0 to 1)
-        'runs': [30],                                                       # Number of runs per configuration
-        'early_stop_gens': [3],                                             # Number of generations before early stopping
-        'delta': [250],                                                     # Fitness improvement threshold for early stopping
+        'pop_size': [10],                                                                           # Population size
+        'generations': [25],                                                                        # Number of generations
+        'selection': ['ranking', 'tournament', 'boltzmann','roulette', 'stochastic'],               # Selection methods ranking, tournament, roulette, stochastic, boltzmann
+        'crossover': ['greedy_merge', 'partially', 'table_preserve','group_based', 'greedy_merge'], # Crossover methods group_based, greedy_merge, partially, table_preserve 
+        'mutation': ['swap', 'one_point', 'multi_point' , 'table_swap','inversion'],                # Mutation methods swap, one_point, multi_point, inversion, table_swap
+        'cx_rate': [0.5,0.9],                                                                       # Crossover rate (0 to 1)
+        'mut_rate': [0.5,0.7],                                                                      # Mutation rate (0 to 1)
+        'elitism_percent': [0,0.05],                                                                # Elitism percentage (0 to 1)
+        'runs': [30],                                                                               # Number of runs per configuration
+        'early_stop_gens': [3],                                                                     # Number of generations before early stopping
+        'delta': [250],                                                                             # Fitness improvement threshold for early stopping
     }
     return params
 
