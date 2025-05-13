@@ -12,17 +12,17 @@ os.makedirs(os.path.dirname(RESULTS_PATH), exist_ok=True)
 def get_parameters():
     """Generate all parameter combinations"""
     params = {
-        'pop_size': [100],                                                  # Population size
-        'generations': [50],                                                # Number of generations
-        'selection': ['ranking', 'tournament', 'boltzmann'],                # Selection methods ranking, tournament, roulette, stochastic, boltzmann
-        'crossover': ['greedy_merge', 'partially', 'table_preserve'],       # Crossover methods group_based, greedy_merge, partially, table_preserve 
-        'mutation': [ 'inversion'],                                         # Mutation methods swap, one_point, multi_point, inversion, table_swap
-        'cx_rate': [0.5,0.6,0.7,0.8,0.9],                                   # Crossover rate (0 to 1)
-        'mut_rate': [0.5,0.6,0.7,0.8,0.9],                                  # Mutation rate (0 to 1)
-        'elitism_percent': [0,0.05],                                        # Elitism percentage (0 to 1)
-        'runs': [30],                                                       # Number of runs per configuration
-        'early_stop_gens': [3],                                             # Number of generations before early stopping
-        'delta': [250],                                                     # Fitness improvement threshold for early stopping
+        'pop_size': [10],                                                                   # Population size
+        'generations': [50],                                                                # Number of generations
+        'selection': ['ranking', 'tournament', 'roulette', 'stochastic', 'boltzmann'],      # Selection methods ranking, tournament, roulette, stochastic, boltzmann
+        'crossover': ['group_based', 'greedy_merge', 'partially', 'table_preserve' ],       # Crossover methods group_based, greedy_merge, partially, table_preserve 
+        'mutation': [ 'swap', 'one_point', 'multi_point', 'inversion', 'table_swap'],       # Mutation methods swap, one_point, multi_point, inversion, table_swap
+        'cx_rate': [0.2,0.4],                                                               # Crossover rate (0 to 1)
+        'mut_rate': [0.1,0.3],                                                              # Mutation rate (0 to 1)
+        'elitism_percent': [0,0.05],                                                        # Elitism percentage of pop_size (0 to 1)
+        'runs': [30],                                                                       # Number of runs per configuration
+        'early_stop_gens': [3],                                                             # Number of generations before early stopping
+        'delta': [250],                                                                     # Fitness improvement threshold for early stopping
     }
     return params
 
@@ -76,7 +76,7 @@ def run_experiment(config):
         'std_fitness': std_fitness,
         'std_generations': std_generations,
         'best_solution': best_solution,
-        'fitness_progress': avg_fitness_progress
+        'avg_fitness_progress': avg_fitness_progress
     }
 
 def save_results(new_results):
