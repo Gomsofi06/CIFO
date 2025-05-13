@@ -1,46 +1,53 @@
 import random
-from copy import deepcopy
+import numpy as np
 from individual import Individual
-from individual import generate_random_seating
+import bisect
 
+def roulette_selection(population, num_selected):
+    fitnesses = [indiv.fitness for indiv in population]
+    total = sum(fitnesses)
+    return [
+        population[bisect.bisect_left(np.cumsum(fitnesses), random.uniform(0, total))]
+        for _ in range(num_selected)
+    ]
 
-#roulette selection
-# individuals with highest fitness have higher chance of being selected
-def roulette_selection(population: list[generate_random_seating]):
-    fitness_values = [Individual.fitness(ind) for ind in population] # get fitness values from population
+def ranking_selection(population, num_selected):
+    ranked = sorted(population, key=lambda x: x.fitness)
+    weights = np.arange(1, len(ranked)+1)
+    return [ranked[i] for i in np.random.choice(len(ranked), size=num_selected, p=weights/weights.sum())]
 
-    total_fitness = sum(fitness_values)  # calculate total fitness
+def tournament_selection(population, num_selected, k=3):
+    return [max(random.sample(population, k), key=lambda x: x.fitness) for _ in range(num_selected)]
+
+def stochastic_universal_sampling(population, num_selected):
+    fitnesses = [indiv.fitness for indiv in population]
+    total = sum(fitnesses)
+    interval = total / num_selected
+    start = random.uniform(0, interval)
+    pointers = [start + i*interval for i in range(num_selected)]
+    return [population[bisect.bisect_left(np.cumsum(fitnesses), p % total)] for p in pointers]
+
+def boltzmann_selection(population, num_selected, temp=100):
+    fitnesses = np.array([indiv.fitness for indiv in population])
     
-    # Generate random number between 0 and total fitness
-    random_nr = random.uniform(0, total_fitness)
-    box_boundary = 0
+    # Handle case where all fitness values are equal
+    if np.all(fitnesses == fitnesses[0]):
+        return random.sample(population, num_selected)
     
-    # For each individual check if random number is inside the individuals box
-    for ind, fitness in zip(population, fitness_values):
-        box_boundary += fitness
-        if random_nr <= box_boundary:  # if inside, return (deepcopy) of this individual
-            return deepcopy(ind)
-
-
-#ranking selsction
-# every individual gets probability based on position in ranking, not real fitness value
-def ranking_selection(population: list[generate_random_seating]):
+    # Scale values to prevent underflow/overflow
+    scaled_fitness = fitnesses - np.max(fitnesses)
+    weights = np.exp(scaled_fitness / temp)
     
-    sorted_population = sorted(population, key=lambda ind: Individual.fitness(ind), reverse=True)  #sort population from worst to best (by fitness)
-    n = len(sorted_population) # length of ranking
-
-    ranks = list(range(1, n + 1))  # list of range values [1, 2, 3, ...]
-
-    total_rank_sum = sum(ranks) # sum of ranks
-    probabilities = [rank / total_rank_sum for rank in ranks] # calculate probabilities for each individual
-
-    selected_index = random.choices(range(n), weights=probabilities, k=1)[0]  # select random individual based on probabilites
-    return deepcopy(sorted_population[selected_index]) # return this individual
-
-
-#tournament selection
-# randomly select k individuals from population, between these k, best one wins
-def tournament_selection(population, k=3):
-    competitors = random.sample(population, k)
-    best = max(competitors, key=lambda ind: Individual.fitness(ind))
-    return best
+    # Add epsilon to avoid division by zero
+    weights_sum = np.sum(weights) + 1e-10
+    probabilities = weights / weights_sum
+    
+    # Handle any remaining numerical instability
+    if np.any(np.isnan(probabilities)):
+        probabilities = np.ones_like(probabilities) / len(probabilities)
+    
+    return [population[i] for i in np.random.choice(
+        len(population), 
+        size=num_selected, 
+        p=probabilities
+    )]

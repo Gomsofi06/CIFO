@@ -1,119 +1,53 @@
 import random
-import copy
+import numpy as np
+from individual import Individual
 
-# HELPER FUNCTION (build a lookup dictionary: guest → table index)
-def build_guest_to_table_map(seating):
-    guest_to_table = {}
+def swap_mutation(indiv, pm=0.2):
+    new_seating = np.copy(indiv.seating)
+    guest_map = indiv.create_guest_table_map.copy()
     
-    for table_index, table in enumerate(seating):
-        for guest in table:
-            guest_to_table[guest] = table_index
-            
-    return guest_to_table
-
-
-# STANDARD MUTATION
-# for every guest with probability pm, try to swap with other guest from other table
-def swap_mutation(seating, pm=0.2):
-    mutated = copy.deepcopy(seating)
-    guest_to_table = {}
-
-    # map every guest to his current table
-    for table_idx, table in enumerate(mutated):
-        for guest in table:
-            guest_to_table[guest] = table_idx
-
     for guest in range(64):
-        # ignore if guest is not mapped to any table
-        if guest not in guest_to_table:
-            continue  
-        
         if random.random() < pm:
-            current_table = guest_to_table[guest]
-
-            # choose a different table with guests
-            non_empty_tables = [i for i, table in enumerate(mutated) if len(table) > 0 and i != current_table]
+            ti, idx = guest_map[guest]
+            other_ti = random.choice([t for t in range(8) if t != ti])
+            other_idx = random.randint(0, 7)
             
-            # ignore mutation if there are no valid tables
-            if not non_empty_tables:
-                continue 
+            other_guest = new_seating[other_ti, other_idx]
+            
+            # Swap positions
+            new_seating[ti, idx], new_seating[other_ti, other_idx] = other_guest, guest
+            
+            # Update mappings
+            guest_map[guest] = (other_ti, other_idx)
+            guest_map[other_guest] = (ti, idx)
+    
+    return Individual(new_seating)
 
-            other_table = random.choice(non_empty_tables)
-            other_guest = random.choice(mutated[other_table])
+def one_point_mutation(indiv):
+    new_seating = np.copy(indiv.seating)
+    guest = random.randint(0, 63)
+    ti, idx = indiv.create_guest_table_map[guest]
+    new_ti = random.choice([t for t in range(8) if t != ti])
+    new_idx = random.randint(0, 7)
+    
+    other_guest = new_seating[new_ti, new_idx]
+    new_seating[ti, idx], new_seating[new_ti, new_idx] = other_guest, guest
+    return Individual(new_seating)
 
-            i = mutated[current_table].index(guest)
-            j = mutated[other_table].index(other_guest)
+def multiple_point_mutation(indiv, mutations=3):
+    new_indiv = indiv
+    for _ in range(mutations):
+        new_indiv = one_point_mutation(new_indiv)
+    return new_indiv
 
-            # make swap
-            mutated[current_table][i], mutated[other_table][j] = other_guest, guest
+def inversion_mutation(indiv):
+    flat = indiv.seating.flatten()
+    start, end = sorted(random.sample(range(64), 2))
+    flat[start:end] = flat[start:end][::-1]
+    return Individual(flat.reshape(8, 8))
 
-            guest_to_table[guest] = other_table
-            guest_to_table[other_guest] = current_table
-
-    return mutated
-
-
-# ONE-POINT MUTATION (BIT FLIP)
-# choose one random guest and swap to a different table
-def one_point_mutation(seating, pm=0.2):
-    mutated = copy.deepcopy(seating)
-
-    # Create a guest-to-table lookup (key: guest, value:table )
-    guest_to_table = build_guest_to_table_map(mutated)
-
-    # Randomly select one guest
-    guest_A = random.choice(list(guest_to_table.keys()))
-    table_A = guest_to_table[guest_A]
-  
-    # Select a different table
-    table_B = table_A
-    while table_B == table_A:
-        table_B = random.randint(0, len(mutated) - 1)
-
-    # Select a random guest from the other table
-    guest_B = random.choice(mutated[table_B])
-
-    # Swap the two guests
-    index_A = mutated[table_A].index(guest_A) # guest A position in the current table
-    index_B = mutated[table_B].index(guest_B) # guest B position in the other table
-
-    # swaps the guest position with the other_guest position (from the other table)
-    mutated[table_A][index_A], mutated[table_B][index_B] = guest_B, guest_A 
-
-    # Update guest_to_table mapping
-    guest_to_table[guest_A] = table_B
-    guest_to_table[guest_B] = table_A
-
-    return mutated
-
-
-# MULTIPOINT MUTATION:
-# make various swaps like in the last one (num_mutations times)
-def multiple_point_mutation(seating, num_mutations=5):
-    mutated = copy.deepcopy(seating)
-
-    # Create a guest-to-table lookup (key: guest, value:table)
-    guest_to_table = build_guest_to_table_map(mutated)
-
-    for _ in range(num_mutations): # Loop through the number of mutations
-        guest_A = random.choice(list(guest_to_table.keys()))
-        table_A = guest_to_table[guest_A] # Get the guest table 
-        
-        # Select a different table
-        table_B = table_A
-        while table_B == table_A:
-            table_B = random.randint(0, len(mutated) - 1)
-
-        # Select guest from the other table
-        guest_B = random.choice(mutated[table_B]) 
-
-        # Swap their positions
-        index_A = mutated[table_A].index(guest_A) # guest A position in the current table
-        index_B = mutated[table_B].index(guest_B) # guest B position in the other table
-        mutated[table_A][index_A], mutated[table_B][index_B] = guest_B, guest_A # swaps the guest position with the other_guest position (from the other table)
-
-        # Update the map
-        guest_to_table[guest_A] = table_B
-        guest_to_table[guest_B] = table_A
-
-    return mutated
+def table_swap_mutation(indiv):
+    new_seating = np.copy(indiv.seating)
+    t1, t2 = random.sample(range(8), 2)
+    new_seating[[t1, t2]] = new_seating[[t2, t1]]
+    return Individual(new_seating)
