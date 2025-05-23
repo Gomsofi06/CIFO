@@ -24,7 +24,7 @@ Performance was measured using a custom composite score balancing:
 - Standard deviation (consistency)
 - Generations to convergence (efficiency)
 
-## 🥇 Results
+## Results
 
 - **Advanced configurations** (e.g., Boltzmann + partial elitism) consistently outperformed simple ones.
 - Achieved fitness scores up to **162,500**, although not always reproducible.
